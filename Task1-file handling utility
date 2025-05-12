@@ -1,0 +1,76 @@
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+
+public class FileHandlingUtility {
+
+    // Create a file if it doesn't exist
+    public static void createFileIfNotExists(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        if (!Files.exists(path)) {
+            Files.createFile(path);
+            System.out.println("File created: " + filePath);
+        } else {
+            System.out.println("File already exists: " + filePath);
+        }
+    }
+
+    // Write to a file (overwrite if exists)
+    public static void writeFile(String filePath, String content) throws IOException {
+        Files.write(Paths.get(filePath), content.getBytes(StandardCharsets.UTF_8),
+                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        System.out.println("File written: " + filePath);
+    }
+
+    // Append to a file
+    public static void appendToFile(String filePath, String content) throws IOException {
+        Files.write(Paths.get(filePath), content.getBytes(StandardCharsets.UTF_8),
+                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        System.out.println("Content appended to: " + filePath);
+    }
+
+    // Read content from a file
+    public static String readFile(String filePath) throws IOException {
+        return Files.readString(Paths.get(filePath), StandardCharsets.UTF_8);
+    }
+
+    // Delete a file
+    public static boolean deleteFile(String filePath) {
+        try {
+            return Files.deleteIfExists(Paths.get(filePath));
+        } catch (IOException e) {
+            System.err.println("Error deleting file: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Check if file exists
+    public static boolean fileExists(String filePath) {
+        return Files.exists(Paths.get(filePath));
+    }
+
+    // Main method for testing
+    public static void main(String[] args) {
+        String filePath = "sample.txt";
+
+        try {
+            createFileIfNotExists(filePath);
+            writeFile(filePath, "Hello, this is a Java File Handling Utility.\n");
+            appendToFile(filePath, "Appending more content to the file.\n");
+
+            if (fileExists(filePath)) {
+                String content = readFile(filePath);
+                System.out.println("File Content:\n" + content);
+            }
+
+            if (deleteFile(filePath)) {
+                System.out.println("File deleted successfully.");
+            } else {
+                System.out.println("File could not be deleted.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
